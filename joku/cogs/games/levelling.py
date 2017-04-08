@@ -90,6 +90,10 @@ class Levelling(Cog):
 
         if message.channel.id in [202549694658904065, 200118555105165313]:
             return
+        
+        # MJB is a grouch
+        if message.author.id in [137954013365796864]:
+            return
 
         # Check the spam quotient.
         if not await self.bot.redis.prevent_spam(message.author):
