@@ -24,6 +24,9 @@ class User(Base):
     #: This is automatically calculated.
     level = Column(Integer, nullable=False, default=1)
 
+    #: sets if the user wants to be ignored
+    ignore_level = Column(Boolean, nullable=False, default=False)
+
     #: The money of the user.
     money = Column(BigInteger, nullable=False, default=200)
 

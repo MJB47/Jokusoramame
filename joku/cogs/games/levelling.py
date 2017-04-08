@@ -101,6 +101,11 @@ class Levelling(Cog):
         #    return
 
         user = await self.bot.database.update_user_xp(message.author)
+
+        # we still calculate xp incase they even want to be un-ignored
+        if user.ignore_level:
+            return
+
         # Get the level.
         new_level = get_level_from_exp(user.xp)
 
@@ -307,6 +312,21 @@ class Levelling(Cog):
 
         await ctx.channel.send("**{}** needs `{}` XP to advance to level `{}`.".format(user.name, exp_required,
                                                                                        level + 1))
+
+    @level.command(pass_context=True)
+    async def ignore(self, ctx, *):
+        """
+        Stops the annoying popups from occuring when you level up
+
+        If already set to ignore then you stop being ignored
+        """
+        user = ctx.message.author
+        if user.bot:
+            await ctx.channel.send(":no_entry_sign: **Bots cannot have XP.**")
+            return
+
+        u = await ctx.bot.database.flip_user_ignore_level(user)
+        await ctx.channel.send("Ignore setting now set to: `{}`.".format(user.ignore_level))
 
     @commands.command(pass_context=True, aliases=["exp"])
     async def xp(self, ctx, *, target: discord.Member = None):

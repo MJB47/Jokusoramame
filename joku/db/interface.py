@@ -176,6 +176,20 @@ class DatabaseInterface(object):
 
         return user
 
+    async def flip_user_ignore_level(self, member: discord.Member) -> User:
+        """
+        Changes user ignore_level setting to its opposite
+        """
+        user = await self.get_or_create_user(member)
+        async with threadpool():
+            with self.get_session() as session:
+                user.ignore_level = not user.ignore_level
+                user.last_modified = datetime.datetime.now()
+
+                session.add(user)
+
+        return user
+
     # endregion
 
     # region Settings
@@ -661,7 +675,7 @@ class DatabaseInterface(object):
                               guild: discord.Guild = None) -> typing.Sequence[UserStock]:
         """
         Gets the stocks that a user owns.
-        
+
         If guild is provided, this will only fetch stocks from that guild.
         """
         # always create if needed
@@ -732,7 +746,7 @@ class DatabaseInterface(object):
 
     async def get_remaining_stocks(self, channel: discord.TextChannel) -> int:
         """
-        Gets the remaining amount of stocks for the stock associated w/ this channel. 
+        Gets the remaining amount of stocks for the stock associated w/ this channel.
         """
         g_obb = await self.get_or_create_guild(channel.guild)
 
@@ -757,7 +771,7 @@ class DatabaseInterface(object):
     async def bulk_get_remaining_stocks(self, *stocks: typing.Iterable[Stock]):
         """
         Bulk gets the remaining stocks for a series of stocks.
-        
+
         This is faster than calling the amount of stocks repeatedly.
         """
         async with threadpool():
@@ -777,9 +791,9 @@ class DatabaseInterface(object):
                            amount: int = None, price: int = None) -> Stock:
         """
         Changes the stock for the specified channel.
-        
+
         If the stock already exists, the properties are updated.
-        
+
         :param amount: The amount of stocks to create.
         :param price: The price of this stock.
         """
@@ -806,7 +820,7 @@ class DatabaseInterface(object):
                                        amount: int, crashed: bool = None, update_price: bool = True):
         """
         Changes the amount of stock a user owns.
-        
+
         This will update their currency as appropriate, but will NOT do any bounds checking.
         """
         user = await self.get_or_create_user(user)
