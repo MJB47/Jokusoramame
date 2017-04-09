@@ -326,7 +326,7 @@ class Levelling(Cog):
             return
 
         u = await ctx.bot.database.flip_user_ignore_level(user)
-        await ctx.channel.send("Ignore setting now set to: `{}`.".format(user.ignore_level))
+        await ctx.channel.send("Ignore setting now set to: `{}`.".format(u.ignore_level))
 
     @commands.command(pass_context=True, aliases=["exp"])
     async def xp(self, ctx, *, target: discord.Member = None):
